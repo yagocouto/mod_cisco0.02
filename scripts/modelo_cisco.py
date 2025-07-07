@@ -1,5 +1,3 @@
-# Reexecutando após reset: código corrigido e formatado adequadamente
-
 from pathlib import Path
 import re
 import pandas as pd
