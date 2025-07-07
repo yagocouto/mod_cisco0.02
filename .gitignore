@@ -1,0 +1,35 @@
+# Arquivos Python compilados
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Ambiente virtual
+venv/
+.env/
+.venv/
+
+# Arquivos temporários de sistema
+.DS_Store
+Thumbs.db
+
+# Arquivos de entrada e saída
+entrada/
+saida/
+*.xlsx
+
+# Logs e backups
+*.log
+*.bak
+*.tmp
+
+# Arquivos de IDEs
+.vscode/
+.idea/
+
+# Arquivos de pacote/instalação
+dist/
+build/
+*.egg-info/
+
+# Arquivos ocultos de SO ou pasta
+desktop.ini
