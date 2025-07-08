@@ -4,8 +4,17 @@ import pandas as pd
 
 
 def ler_arquivo(caminho):
-    with open(caminho, "r", encoding="utf-8") as f:
-        return f.readlines()
+    codificacoes = ["utf-8", "latin-1", "cp1252", "utf-16"]
+    for cod in codificacoes:
+        try:
+            with open(caminho, "r", encoding=cod) as f:
+                print(f"Arquivo lido com {cod}")
+                return f.readlines()
+        except UnicodeDecodeError:
+            continue
+    raise UnicodeDecodeError(
+        "Não foi possível decodificar o arquivo com codificações conhecidas."
+    )
 
 
 def extrair_valor_unico(chave, linha):
