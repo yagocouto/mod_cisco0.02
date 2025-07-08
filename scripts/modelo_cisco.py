@@ -105,20 +105,30 @@ def extrair_interfaces_status(linhas, device_name):
     for linha in linhas:
         if linha.strip().startswith("Port") and linha.strip().endswith("Type"):
             capturar = True
+
+            pos_name_ini = re.search(r"Name", linha).start()
+            print(pos_name_ini)
+            pos_status_ini = re.search(r"Status", linha).start()
+            pos_vlan_ini = re.search(r"Vlan", linha).start()
+            pos_duplex_ini = re.search(r"Duplex", linha).start()
+            pos_speed_ini = re.search(r"Speed", linha).start()
+            pos_tipo_ini = re.search(r"Type", linha).start()
+
             continue
 
         if capturar:
+
             if re.match(r"^\S+#$", linha.strip()):
                 continue
             if "show interfaces status err-disabled" in linha.lower():
                 break
-            port = linha[0:10].strip()
-            name = linha[10:29].strip()
-            status = linha[29:42].strip()
-            vlan = linha[42:53].strip()
-            duplex = linha[53:60].strip()
-            speed = linha[60:67].strip()
-            tipo = linha[67:].strip()
+            port = linha[0:pos_name_ini].strip()
+            name = linha[pos_name_ini:pos_status_ini].strip()
+            status = linha[pos_status_ini:pos_vlan_ini].strip()
+            vlan = linha[pos_vlan_ini:pos_duplex_ini].strip()
+            duplex = linha[pos_duplex_ini:pos_speed_ini].strip()
+            speed = linha[pos_speed_ini - 1 : pos_tipo_ini].strip()
+            tipo = linha[pos_tipo_ini:].strip()
 
             interfaces.append(
                 {
@@ -141,7 +151,7 @@ def extrair_interfaces_status(linhas, device_name):
     return interfaces
 
 
-def gerar_excel(dados, caminho_excel, nome_aba):
+def gerar_excel(dados, caminho_excel, nome_aba, device_name):
     df = pd.DataFrame(dados)
     caminho_excel = Path(caminho_excel)
 
@@ -150,14 +160,15 @@ def gerar_excel(dados, caminho_excel, nome_aba):
             caminho_excel, engine="openpyxl", mode="a", if_sheet_exists="overlay"
         ) as writer:
             workbook = writer.book
-            if nome_aba in workbook.sheetnames:
-                del workbook[nome_aba]
-            df.to_excel(writer, sheet_name=nome_aba, index=False)
+            if device_name in workbook.sheetnames:
+                print(device_name)
+                del workbook[device_name]
+            df.to_excel(writer, sheet_name=device_name, index=False)
     else:
         with pd.ExcelWriter(caminho_excel, engine="openpyxl") as writer:
-            df.to_excel(writer, sheet_name=nome_aba, index=False)
+            df.to_excel(writer, sheet_name=device_name, index=False)
 
-    print(f"Planilha salva: {caminho_excel} | Aba: {nome_aba}")
+    print(f"Planilha salva: {caminho_excel} | Aba: {device_name}")
 
 
 def processar_mod_cisco():
@@ -196,4 +207,4 @@ def processar_mod_cisco():
             if observacao:
                 interface["Observação"] = observacao
 
-        gerar_excel(interfaces, caminho_excel, nome_aba[:30])
+        gerar_excel(interfaces, caminho_excel, nome_aba[:30], device_name)
