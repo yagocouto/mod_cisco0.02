@@ -107,7 +107,6 @@ def extrair_interfaces_status(linhas, device_name):
             capturar = True
 
             pos_name_ini = re.search(r"Name", linha).start()
-            print(pos_name_ini)
             pos_status_ini = re.search(r"Status", linha).start()
             pos_vlan_ini = re.search(r"Vlan", linha).start()
             pos_duplex_ini = re.search(r"Duplex", linha).start()
